@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* CSS-First Customizations (v4 style) */
+@theme {
+  --color-primary: #6366F1;
+  /* Indigo for buttons/accents */
+  --color-accent: #8B5CF6;
+  /* Violet for highlights */
+  --color-gold: #D4AF37;
+  /* Arca Nostra luxury gold */
+  --color-vault: #0F172A;
+  /* Deep navy bg */
+
+  --font-family-heading: "Playfair Display", serif;
+  --font-family-body: "Poppins", sans-serif;
+
+  /* Extend spacing, shadows, etc. */
+  --spacing-18: 4.5rem;
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--color-vault);
+  }
+}
