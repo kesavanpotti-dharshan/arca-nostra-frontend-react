@@ -1,27 +1,41 @@
 @import "tailwindcss";
 
-/* CSS-First Customizations (v4 style) */
+/* DaisyUI v5+ Plugin Import (replaces config key) */
+@plugin "daisyui";
+
+/* Your Arca Nostra Custom Theme (v4 @theme directive) */
 @theme {
   --color-primary: #6366F1;
-  /* Indigo for buttons/accents */
+  /* Indigo */
   --color-accent: #8B5CF6;
-  /* Violet for highlights */
+  /* Violet */
   --color-gold: #D4AF37;
-  /* Arca Nostra luxury gold */
+  /* Luxury Gold */
   --color-vault: #0F172A;
-  /* Deep navy bg */
+  /* Deep Navy */
 
   --font-family-heading: "Playfair Display", serif;
   --font-family-body: "Poppins", sans-serif;
 
-  /* Extend spacing, shadows, etc. */
-  --spacing-18: 4.5rem;
-  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --color-background: white;
+  /* Default light mode background */
+  --color-surface: #F1F5F9;
+  /* Default light mode surface (Slate-100) */
 }
 
 /* Dark mode overrides */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--color-vault);
-  }
+:root:has(.dark),
+:root.dark {
+  --color-background: var(--color-vault);
+  --color-surface: #1E293B;
+  /* Slate-800 */
+}
+
+/* Custom utilities */
+.glass {
+  @apply backdrop-blur-md bg-white/10 border border-white/20;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
 }
