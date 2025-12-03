@@ -15,11 +15,14 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     });
 
     useEffect(() => {
+        const root = document.documentElement;
         if (darkMode) {
-            document.documentElement.classList.add("dark");
+            root.classList.add("dark");
+            root.setAttribute("data-theme", "dark");
             localStorage.setItem("arca-nostra-theme", "dark");
         } else {
-            document.documentElement.classList.remove("dark");
+            root.classList.remove("dark");
+            root.setAttribute("data-theme", "light");
             localStorage.setItem("arca-nostra-theme", "light");
         }
     }, [darkMode]);
