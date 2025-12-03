@@ -1,5 +1,3 @@
-// src/app/summary/SummaryPage.tsx
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
