@@ -39,3 +39,25 @@
 .gradient-text {
   @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
 }
+
+/* src/index.css or globals.css */
+@keyframes tilt {
+
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(1deg);
+  }
+
+  75% {
+    transform: rotate(-1deg);
+  }
+}
+
+.animate-tilt {
+  animation: tilt 10s infinite linear;
+}
