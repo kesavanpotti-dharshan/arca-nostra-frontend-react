@@ -40,7 +40,22 @@
   @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
 }
 
-/* src/index.css or globals.css */
+/* ARCA NOSTRA — True Glassmorphism (2025 Edition) */
+.glass {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.40);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Animated tilt for glowing borders */
 @keyframes tilt {
 
   0%,
@@ -50,14 +65,14 @@
   }
 
   25% {
-    transform: rotate(1deg);
+    transform: rotate(0.5deg);
   }
 
   75% {
-    transform: rotate(-1deg);
+    transform: rotate(-0.5deg);
   }
 }
 
 .animate-tilt {
-  animation: tilt 10s infinite linear;
+  animation: tilt 12s infinite linear;
 }

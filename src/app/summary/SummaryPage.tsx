@@ -72,7 +72,7 @@ export default function SummaryPage() {
                         <div className={`absolute -inset-0.5 bg-gradient-to-r ${card.gradient} rounded-2xl blur opacity-70 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt`} />
 
                         {/* Glass Card */}
-                        <div className="relative bg-base-100/90 backdrop-blur-xl rounded-2xl border border-base-300/50 p-8 text-center shadow-2xl transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-3xl">
+                        <div className="relative glass rounded-3xl p-8 text-center shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:shadow-3xl">
                             {/* Glowing Border Effect */}
                             <div className={`absolute inset-0 rounded-2xl border-2 ${card.border} opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`} />
 

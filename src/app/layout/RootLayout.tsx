@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/common/Sidebar";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "sonner";
 import SummaryPage from "../summary/SummaryPage";
+import AssetsPage from "../assets/AssetsPage";
 
 export default function RootLayout() {
     return (
@@ -22,6 +23,7 @@ export default function RootLayout() {
                         <div className="container mx-auto px-4 py-8 max-w-7xl">
                             <Routes>
                                 <Route path="/" element={<SummaryPage />} />
+                                <Route path="/assets" element={<AssetsPage />} />
                                 <Route path="*" element={<div>404 - Not Found</div>} />
                             </Routes>
                         </div>
