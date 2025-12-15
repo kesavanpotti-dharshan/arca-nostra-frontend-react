@@ -14,13 +14,27 @@
   --color-vault: #0F172A;
   /* Deep Navy */
 
-  --font-family-heading: "Playfair Display", serif;
-  --font-family-body: "Poppins", sans-serif;
+  --font-family-heading: "Cinzel", serif;
+  --font-family-body: "Outfit", sans-serif;
 
   --color-background: white;
   /* Default light mode background */
   --color-surface: #F1F5F9;
   /* Default light mode surface (Slate-100) */
+}
+
+/* Apply fonts globally */
+body {
+  font-family: var(--font-family-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-heading);
 }
 
 /* Dark mode overrides */

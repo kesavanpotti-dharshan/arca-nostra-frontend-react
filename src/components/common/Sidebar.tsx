@@ -20,8 +20,10 @@ const navItems = [
 
 export function Sidebar() {
     return (
-        <aside className="hidden lg:flex w-64 flex-col bg-base-100 border-r border-base-300">
-            <nav className="flex-1 px-4 py-6 space-y-1">
+        <aside className="hidden lg:flex w-72 flex-col h-[calc(100vh-6rem)] sticky top-24 ml-4 mb-4 rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 dark:from-sky-900/5 dark:to-indigo-900/10 pointer-events-none" />
+
+            <nav className="flex-1 px-4 py-8 space-y-2 relative">
                 {navItems.map((item) => {
                     const Icon = item.icon;
                     return (
@@ -30,22 +32,55 @@ export function Sidebar() {
                             to={item.to}
                             end
                             className={({ isActive }) =>
-                                `flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
-                                    ? "bg-primary text-white shadow-lg"
-                                    : "hover:bg-base-200 text-base-content"
+                                `relative group flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 overflow-hidden ${isActive
+                                    ? "text-amber-400 font-heading font-bold shadow-lg"
+                                    : "text-base-content/70 hover:text-base-content hover:bg-white/10"
                                 }`
                             }
                         >
-                            <Icon className="w-5 h-5" />
-                            <span className="font-medium">{item.label}</span>
+                            {({ isActive }) => (
+                                <>
+                                    {/* Active Background Gradient */}
+                                    {isActive && (
+                                        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-slate-800 border border-white/10" />
+                                    )}
+
+                                    {/* Hover Glow */}
+                                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                                    {/* Active Indicator Line */}
+                                    {isActive && (
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-400 to-amber-600 shadow-[0_0_10px_rgba(251,191,36,0.5)]" />
+                                    )}
+
+                                    <div className="relative z-10 flex items-center gap-4">
+                                        <Icon className={`w-6 h-6 transition-transform duration-300 group-hover:scale-110 ${isActive ? "text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" : ""}`} />
+                                        <span className={`tracking-wide ${isActive ? "text-lg" : "font-medium"}`}>{item.label}</span>
+                                    </div>
+
+                                    {/* Chevron for Active */}
+                                    {isActive && (
+                                        <div className="absolute right-4 text-amber-500/50 animate-pulse">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </NavLink>
                     );
                 })}
             </nav>
 
-            <div className="p-4 border-t border-base-300">
-                <div className="text-xs text-base-content/60 text-center">
-                    Arca Nostra — Tua res, nostra cura
+            <div className="p-6 border-t border-white/5 relative">
+                <div className="text-center space-y-2">
+                    <p className="font-heading text-xs uppercase tracking-[0.2em] text-amber-500/60 font-bold">
+                        Arca Nostra
+                    </p>
+                    <p className="font-serif italic text-xs text-base-content/40">
+                        "Tua res, nostra cura"
+                    </p>
                 </div>
             </div>
         </aside>

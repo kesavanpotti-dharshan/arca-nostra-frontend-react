@@ -12,7 +12,7 @@ import ObligationsPage from "../obligations/ObligationsPage";
 export default function RootLayout() {
     return (
         <ThemeProvider>
-            <div className="min-h-screen bg-base-100 text-base-content flex flex-col">
+            <div className="h-screen overflow-hidden bg-base-100 text-base-content flex flex-col">
                 {/* Header */}
                 <Header />
 
