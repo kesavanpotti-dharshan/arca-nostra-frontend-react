@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "sonner";
 import SummaryPage from "../summary/SummaryPage";
 import AssetsPage from "../assets/AssetsPage";
+import LiabilitiesPage from "../liabilities/LiabilitiesPage";
+import ObligationsPage from "../obligations/ObligationsPage";
 
 export default function RootLayout() {
     return (
@@ -24,6 +26,8 @@ export default function RootLayout() {
                             <Routes>
                                 <Route path="/" element={<SummaryPage />} />
                                 <Route path="/assets" element={<AssetsPage />} />
+                                <Route path="/liabilities" element={<LiabilitiesPage />} />
+                                <Route path="/obligations" element={<ObligationsPage />} />
                                 <Route path="*" element={<div>404 - Not Found</div>} />
                             </Routes>
                         </div>

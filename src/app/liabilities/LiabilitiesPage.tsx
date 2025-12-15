@@ -1,130 +1,137 @@
-// src/app/assets/AssetsPage.tsx
+// src/app/liabilities/LiabilitiesPage.tsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchAssets, createAsset, updateAsset, deleteAsset, type CreateAssetDto, type AssetResponse } from "@/lib/api/assets";
-import { Search, Plus, Edit2, Trash2, TrendingUp, X, TrendingDown, DollarSign, Calendar } from "lucide-react";
+import { fetchLiabilities, createLiability, updateLiability, deleteLiability, type CreateLiabilityDto, type LiabilityResponse } from "@/lib/api/liabilities";
+import { Search, Plus, Edit2, Trash2, TrendingDown, X, Building2, Lock, Unlock } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-// Common asset types/currencies from response
-// Using 1 as default type ID based on JSON
-const DEFAULT_ASSET_TYPE_ID = 1;
+// Common liability types for the dropdown
+const LIABILITY_TYPES = [
+    "Mortgage",
+    "Credit Card",
+    "Personal Loan",
+    "Car Loan",
+    "Student Loan",
+    "Other"
+];
 
-export default function AssetsPage() {
+export default function LiabilitiesPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingAsset, setEditingAsset] = useState<AssetResponse | null>(null);
+    const [editingLiability, setEditingLiability] = useState<LiabilityResponse | null>(null);
 
     const queryClient = useQueryClient();
 
-    const { data: assets, isLoading, isError, error } = useQuery({
-        queryKey: ["assets"],
-        queryFn: () => fetchAssets().then(res => res.data),
+    const { data: liabilities, isLoading, isError, error } = useQuery({
+        queryKey: ["liabilities"],
+        queryFn: () => fetchLiabilities().then(res => res.data),
     });
 
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CreateAssetDto>();
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CreateLiabilityDto>();
 
     const createMutation = useMutation({
-        mutationFn: createAsset,
+        mutationFn: createLiability,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["assets"] });
-            toast.success("Asset added successfully");
+            queryClient.invalidateQueries({ queryKey: ["liabilities"] });
+            toast.success("Liability added successfully");
             closeModal();
         },
         onError: () => {
-            toast.error("Failed to add asset");
+            toast.error("Failed to add liability");
         }
     });
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, data }: { id: number; data: CreateAssetDto }) => updateAsset(id, data),
+        mutationFn: ({ id, data }: { id: number; data: CreateLiabilityDto }) => updateLiability(id, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["assets"] });
-            toast.success("Asset updated successfully");
+            queryClient.invalidateQueries({ queryKey: ["liabilities"] });
+            toast.success("Liability updated successfully");
             closeModal();
         },
         onError: () => {
-            toast.error("Failed to update asset");
+            toast.error("Failed to update liability");
         }
     });
 
     const deleteMutation = useMutation({
-        mutationFn: deleteAsset,
+        mutationFn: deleteLiability,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["assets"] });
-            toast.success("Asset deleted successfully");
+            queryClient.invalidateQueries({ queryKey: ["liabilities"] });
+            toast.success("Liability deleted successfully");
         },
         onError: () => {
-            toast.error("Failed to delete asset");
+            toast.error("Failed to delete liability");
         }
     });
 
     const openAddModal = () => {
-        setEditingAsset(null);
+        setEditingLiability(null);
         reset({
-            assetName: "",
-            assetTypeId: DEFAULT_ASSET_TYPE_ID,
-            ticker: "USD",
-            quantity: 0,
-            purchasePricePerUnit: 0,
-            currency: "Bank",
-            notes: "",
-            isActive: true
+            name: "",
+            type: "Credit Card",
+            currentBalance: 0,
+            monthlyPayment: 0,
+            interestRate: 0,
+            creditor: "",
+            isSecured: false,
+            endDate: null
         });
         setIsModalOpen(true);
     };
 
-    const openEditModal = (asset: AssetResponse) => {
-        setEditingAsset(asset);
-        setValue("assetName", asset.assetName);
-        setValue("assetTypeId", asset.assetTypeId);
-        setValue("ticker", asset.ticker);
-        setValue("quantity", asset.quantity);
-        setValue("purchasePricePerUnit", asset.purchasePricePerUnit || 0);
-        setValue("purchaseDate", asset.purchaseDate ? asset.purchaseDate.split('T')[0] : "");
-        setValue("currency", asset.currency);
-        setValue("notes", asset.notes || "");
-        setValue("isActive", asset.isActive);
+    const openEditModal = (liability: LiabilityResponse) => {
+        setEditingLiability(liability);
+        setValue("name", liability.name);
+        setValue("type", liability.type);
+        setValue("currentBalance", liability.currentBalance);
+        setValue("monthlyPayment", liability.monthlyPayment);
+        setValue("interestRate", liability.interestRate);
+        setValue("creditor", liability.creditor);
+        setValue("isSecured", liability.isSecured);
+        setValue("endDate", liability.endDate);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setEditingAsset(null);
+        setEditingLiability(null);
         reset();
     };
 
-    const onSubmit = (data: CreateAssetDto) => {
-        // Ensure numbers are numbers and format payload
-        const formattedData: CreateAssetDto = {
+    const onSubmit = (data: CreateLiabilityDto) => {
+        // Ensure numbers are numbers
+        const formattedData = {
             ...data,
-            quantity: Number(data.quantity),
-            purchasePricePerUnit: Number(data.purchasePricePerUnit),
-            assetTypeId: Number(data.assetTypeId),
+            currentBalance: Number(data.currentBalance),
+            monthlyPayment: Number(data.monthlyPayment),
+            interestRate: Number(data.interestRate),
         };
 
-        if (editingAsset) {
-            updateMutation.mutate({ id: editingAsset.id, data: formattedData });
+        if (editingLiability) {
+            updateMutation.mutate({ id: editingLiability.id, data: formattedData });
         } else {
             createMutation.mutate(formattedData);
         }
     };
 
     const handleDelete = (id: number) => {
-        if (confirm("Are you sure you want to delete this asset?")) {
+        if (confirm("Are you sure you want to delete this liability?")) {
             deleteMutation.mutate(id);
         }
     };
 
-    const filteredAssets = assets?.filter((asset: AssetResponse) => {
-        const name = asset.assetName || "";
-        const currency = asset.currency || "";
+    const filteredLiabilities = liabilities?.filter((liability: LiabilityResponse) => {
+        const name = liability?.name || "";
+        const type = liability?.type || "";
+        const creditor = liability?.creditor || "";
         const search = searchTerm.toLowerCase();
         return name.toLowerCase().includes(search) ||
-            currency.toLowerCase().includes(search);
+            type.toLowerCase().includes(search) ||
+            creditor.toLowerCase().includes(search);
     });
 
-    const totalAssetsValue = assets?.reduce((sum, item) => sum + (item.currentValue || 0), 0) || 0;
+    const totalLiabilities = liabilities?.reduce((sum, item) => sum + (item.currentBalance || 0), 0) || 0;
 
     if (isLoading) {
         return (
@@ -142,14 +149,14 @@ export default function AssetsPage() {
                 </div>
                 <div className="max-w-md space-y-2">
                     <h2 className="text-3xl font-heading font-bold text-base-content">
-                        Unable to load assets
+                        Unable to load liabilities
                     </h2>
                     <p className="text-base-content/60">
-                        {error instanceof Error ? error.message : "We couldn't connect to the server to fetch your assets. Please try again later."}
+                        {error instanceof Error ? error.message : "We couldn't connect to the server to fetch your liabilities. Please try again later."}
                     </p>
                 </div>
                 <button
-                    onClick={() => queryClient.invalidateQueries({ queryKey: ["assets"] })}
+                    onClick={() => queryClient.invalidateQueries({ queryKey: ["liabilities"] })}
                     className="btn btn-outline btn-error gap-2"
                 >
                     Try Again
@@ -162,15 +169,15 @@ export default function AssetsPage() {
         <div className="space-y-12">
             {/* Hero Header */}
             <div className="text-center">
-                <h1 className="text-5xl font-heading bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
-                    Your Empire
+                <h1 className="text-5xl font-heading bg-gradient-to-r from-red-500 via-orange-500 to-red-500 bg-clip-text text-transparent animate-pulse">
+                    Your Liabilities
                 </h1>
                 <div className="mt-4 flex flex-col items-center">
-                    <span className="text-4xl font-bold text-success">
-                        ${totalAssetsValue.toLocaleString()}
+                    <span className="text-4xl font-bold text-error">
+                        -${totalLiabilities.toLocaleString()}
                     </span>
                     <p className="text-lg text-base-content/70 mt-1">
-                        Total across <b>{assets?.length || 0}</b> assets
+                        Total across <b>{liabilities?.length || 0}</b> liabilities
                     </p>
                 </div>
             </div>
@@ -181,7 +188,7 @@ export default function AssetsPage() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder="Search your empire..."
+                        placeholder="Search liabilities..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="input input-bordered w-full pl-12 glass border-base-300/50 focus:border-primary/50 transition-all"
@@ -190,34 +197,27 @@ export default function AssetsPage() {
 
                 <button
                     onClick={openAddModal}
-                    className="btn btn-primary btn-lg shadow-2xl hover:shadow-primary/50 transition-all duration-300 flex items-center gap-3 group"
+                    className="btn btn-error btn-lg shadow-2xl hover:shadow-error/50 transition-all duration-300 flex items-center gap-3 group"
                 >
                     <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="font-semibold">Add Asset</span>
+                    <span className="font-semibold">Add Liability</span>
                 </button>
             </div>
 
-            {/* Luxury Cards Grid */}
+            {/* Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filteredAssets?.map((asset: AssetResponse) => {
-                    const value = asset.currentValue ?? 0;
-                    const monthlyIncome = asset.monthlyIncome ?? 0;
-                    const gainLoss = asset.unrealizedGainLoss ?? 0;
-                    const isProfitable = gainLoss >= 0;
-
-                    const typeColor = asset.currency === "Bank"
-                        ? "#10b981"
-                        : asset.currency === "Credit"
-                            ? "#ef4444"
-                            : "#6366F1";
+                {filteredLiabilities?.map((liability: LiabilityResponse) => {
+                    const balance = liability.currentBalance ?? 0;
+                    const monthlyPayment = liability.monthlyPayment ?? 0;
+                    const typeColor = "#ef4444"; // Default red for liabilities
 
                     return (
-                        <div key={asset.id} className="relative group">
+                        <div key={liability.id} className="relative group">
                             {/* Animated Gradient Border */}
                             <div
-                                className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 animate-tilt"
+                                className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-orange-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 animate-tilt"
                                 style={{
-                                    background: `linear-gradient(135deg, ${typeColor}, #8B5CF6)`,
+                                    background: `linear-gradient(135deg, ${typeColor}, #f97316)`,
                                 }}
                             />
 
@@ -235,63 +235,56 @@ export default function AssetsPage() {
                                         className="badge badge-lg text-white font-bold shadow-lg mx-auto"
                                         style={{ backgroundColor: typeColor }}
                                     >
-                                        {asset.currency || "Asset"}
+                                        {liability.type || "Debt"}
                                     </div>
                                 </div>
 
-                                {/* Asset Name */}
-                                <h3 className="text-2xl font-heading mb-2 line-clamp-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                                    {asset.assetName || "Unnamed Asset"}
+                                {/* Liability Name */}
+                                <h3 className="text-2xl font-heading mb-2 line-clamp-2 bg-gradient-to-r from-error to-orange-500 bg-clip-text text-transparent">
+                                    {liability.name || "Unnamed Liability"}
                                 </h3>
 
                                 <div className="flex items-center justify-center gap-2 text-base-content/60 mb-4 text-sm">
-                                    <DollarSign className="w-4 h-4" />
-                                    <span>{asset.quantity} {asset.ticker}</span>
+                                    <Building2 className="w-4 h-4" />
+                                    <span>{liability.creditor}</span>
                                 </div>
+
 
                                 {/* Value */}
                                 <div className="mb-6">
-                                    <p className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                                        ${Number(value).toLocaleString()}
+                                    <p className="text-4xl font-bold bg-gradient-to-r from-error to-orange-500 bg-clip-text text-transparent">
+                                        -${Number(balance).toLocaleString()}
                                     </p>
-
-                                    {/* Unrealized Gain/Loss */}
-                                    {asset.unrealizedGainLoss !== null && (
-                                        <div className={`text-xs mt-1 flex items-center justify-center gap-1 font-bold ${isProfitable ? 'text-success' : 'text-error'}`}>
-                                            {isProfitable ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                                            {isProfitable ? '+' : ''}{Number(gainLoss).toLocaleString()}
-                                        </div>
-                                    )}
+                                    <div className="text-xs text-base-content/50 mt-1 flex items-center justify-center gap-1">
+                                        {liability.isSecured ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                                        {liability.isSecured ? "Secured" : "Unsecured"}
+                                    </div>
                                 </div>
 
-                                {/* Monthly Income */}
-                                {monthlyIncome > 0 && (
-                                    <div className="flex items-center justify-center gap-3 text-success">
-                                        <TrendingUp className="w-6 h-6" />
+                                {/* Monthly Payment */}
+                                {monthlyPayment > 0 && (
+                                    <div className="flex items-center justify-center gap-3 text-error">
+                                        <TrendingDown className="w-6 h-6" />
                                         <span className="text-xl font-bold">
-                                            +${monthlyIncome.toFixed(0)}/mo
+                                            -${monthlyPayment.toFixed(0)}/mo
                                         </span>
                                     </div>
                                 )}
 
-                                {/* Purchase Date */}
-                                {asset.purchaseDate && (
-                                    <div className="mt-4 text-xs text-base-content/40 flex items-center justify-center gap-1">
-                                        <Calendar className="w-3 h-3" />
-                                        Bought {new Date(asset.purchaseDate).toLocaleDateString()}
-                                    </div>
-                                )}
+                                <div className="mt-2 text-sm text-base-content/60">
+                                    {liability.interestRate}% APR
+                                </div>
 
                                 {/* Hover Actions */}
                                 <div className="flex justify-center gap-4 mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <button
-                                        onClick={() => openEditModal(asset)}
+                                        onClick={() => openEditModal(liability)}
                                         className="btn btn-ghost btn-circle"
                                     >
                                         <Edit2 className="w-5 h-5" />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(asset.id)}
+                                        onClick={() => handleDelete(liability.id)}
                                         className="btn btn-ghost btn-circle text-error"
                                     >
                                         <Trash2 className="w-5 h-5" />
@@ -309,7 +302,7 @@ export default function AssetsPage() {
                     <div className="bg-base-100 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-base-300">
                         <div className="p-6 border-b border-base-300 flex justify-between items-center bg-base-200/50">
                             <h3 className="text-2xl font-heading font-bold">
-                                {editingAsset ? "Edit Asset" : "Add Asset"}
+                                {editingLiability ? "Edit Liability" : "Add Liability"}
                             </h3>
                             <button onClick={closeModal} className="btn btn-ghost btn-circle btn-sm">
                                 <X className="w-5 h-5" />
@@ -323,74 +316,98 @@ export default function AssetsPage() {
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="e.g. Apple Stock"
+                                    placeholder="e.g. Chase Sapphire Reserve"
                                     className="input input-bordered w-full"
-                                    {...register("assetName", { required: true })}
+                                    {...register("name", { required: true })}
                                 />
-                                {errors.assetName && <span className="text-error text-sm mt-1">Name is required</span>}
+                                {errors.name && <span className="text-error text-sm mt-1">Name is required</span>}
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium">Creditor</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Chase Bank"
+                                    className="input input-bordered w-full"
+                                    {...register("creditor", { required: true })}
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text font-medium">Ticker/Symbol</span>
+                                        <span className="label-text font-medium">Type</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. AAPL"
-                                        className="input input-bordered w-full"
-                                        {...register("ticker")}
-                                    />
+                                    <select className="select select-bordered w-full" {...register("type", { required: true })}>
+                                        {LIABILITY_TYPES.map(type => (
+                                            <option key={type} value={type}>{type}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="form-control">
                                     <label className="label">
-                                        <span className="label-text font-medium">Currency/Type</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. Bank"
-                                        className="input input-bordered w-full"
-                                        {...register("currency")}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="form-control">
-                                    <label className="label">
-                                        <span className="label-text font-medium">Quantity</span>
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        placeholder="0"
-                                        className="input input-bordered w-full"
-                                        {...register("quantity", { required: true })}
-                                    />
-                                </div>
-                                <div className="form-control">
-                                    <label className="label">
-                                        <span className="label-text font-medium">Purchase Price</span>
+                                        <span className="label-text font-medium">Current Balance</span>
                                     </label>
                                     <input
                                         type="number"
                                         step="0.01"
                                         placeholder="0.00"
                                         className="input input-bordered w-full"
-                                        {...register("purchasePricePerUnit")}
+                                        {...register("currentBalance", { required: true, min: 0 })}
                                     />
                                 </div>
                             </div>
 
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text font-medium">Purchase Date</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    className="input input-bordered w-full"
-                                    {...register("purchaseDate")}
-                                />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-medium">Monthly Payment</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        className="input input-bordered w-full"
+                                        {...register("monthlyPayment", { min: 0 })}
+                                    />
+                                </div>
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-medium">Interest Rate (%)</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        className="input input-bordered w-full"
+                                        {...register("interestRate", { min: 0 })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="form-control">
+                                    <label className="label cursor-pointer justify-start gap-4">
+                                        <span className="label-text font-medium">Secured Loan</span>
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox checkbox-primary"
+                                            {...register("isSecured")}
+                                        />
+                                    </label>
+                                </div>
+                                <div className="form-control">
+                                    <label className="label">
+                                        <span className="label-text font-medium">End Date</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        className="input input-bordered w-full"
+                                        {...register("endDate")}
+                                    />
+                                </div>
                             </div>
 
                             <div className="modal-action pt-4">
@@ -403,7 +420,7 @@ export default function AssetsPage() {
                                     {createMutation.isPending || updateMutation.isPending ? (
                                         <span className="loading loading-spinner"></span>
                                     ) : (
-                                        editingAsset ? "Update" : "Create"
+                                        editingLiability ? "Update" : "Create"
                                     )}
                                 </button>
                             </div>
@@ -414,3 +431,4 @@ export default function AssetsPage() {
         </div>
     );
 }
+

@@ -3,30 +3,41 @@ import api from "./client";
 
 export interface AssetResponse {
     id: number;
-    name: string;
     assetTypeId: number;
-    assetType: {
-        id: number;
-        name: string;
-        colorHex?: string;
-        iconName?: string;
-    };
-    currentValue: number;
-    monthlyIncome?: number;
+    assetType: string | null;
+    assetName: string;
+    ticker: string;
+    currentValue: number | null;
+    quantity: number;
+    purchasePricePerUnit: number | null;
+    costBasis: number | null;
+    annualIncome: number | null;
+    yieldPercentage: number | null;
+    incomeFrequency: number;
+    purchaseDate: string | null;
+    lastIncomeDate: string | null;
+    nextIncomeDate: string | null;
     lastUpdated: string;
-    ticker?: string;
-    quantity?: number;
+    currency: string;
+    country: string | null;
+    secondaryCurrency: string | null;
+    notes: string | null;
+    isActive: boolean;
+    unrealizedGainLoss: number | null;
+    unrealizedGainLossPercent: number | null;
+    monthlyIncome: number | null;
 }
 
 export interface CreateAssetDto {
+    assetName: string;
     assetTypeId: number;
-    name: string;
-    currentValue?: number;
-    quantity?: number;
     ticker?: string;
-    annualIncome?: number;
-    yieldPercentage?: number;
+    quantity?: number;
+    purchasePricePerUnit?: number;
+    purchaseDate?: string;
     currency?: string;
+    notes?: string;
+    isActive?: boolean;
 }
 
 export interface UpdateAssetDto extends Partial<CreateAssetDto> { }
