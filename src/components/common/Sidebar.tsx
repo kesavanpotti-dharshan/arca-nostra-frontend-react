@@ -20,8 +20,8 @@ const navItems = [
 
 export function Sidebar() {
     return (
-        <aside className="hidden lg:flex w-72 flex-col h-[calc(100vh-6rem)] sticky top-24 ml-4 mb-4 rounded-3xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 dark:from-sky-900/5 dark:to-indigo-900/10 pointer-events-none" />
+        <aside className="hidden lg:flex w-72 flex-col h-full border-r border-base-300 dark:border-white/10 bg-base-100/50 dark:bg-base-100/80 backdrop-blur-xl relative z-40">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
 
             <nav className="flex-1 px-4 py-8 space-y-2 relative">
                 {navItems.map((item) => {
@@ -33,8 +33,8 @@ export function Sidebar() {
                             end
                             className={({ isActive }) =>
                                 `relative group flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 overflow-hidden ${isActive
-                                    ? "text-amber-400 font-heading font-bold shadow-lg"
-                                    : "text-base-content/70 hover:text-base-content hover:bg-white/10"
+                                    ? "text-amber-500 font-heading font-bold shadow-sm bg-base-100"
+                                    : "text-base-content/60 hover:text-base-content hover:bg-base-content/5"
                                 }`
                             }
                         >
@@ -42,7 +42,7 @@ export function Sidebar() {
                                 <>
                                     {/* Active Background Gradient */}
                                     {isActive && (
-                                        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-slate-800 border border-white/10" />
+                                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent dark:from-gray-900 dark:to-slate-800 border-l-4 border-amber-500" />
                                     )}
 
                                     {/* Hover Glow */}
@@ -73,9 +73,9 @@ export function Sidebar() {
                 })}
             </nav>
 
-            <div className="p-6 border-t border-white/5 relative">
+            <div className="p-6 border-t border-base-content/10 dark:border-white/5 relative">
                 <div className="text-center space-y-2">
-                    <p className="font-heading text-xs uppercase tracking-[0.2em] text-amber-500/60 font-bold">
+                    <p className="font-heading text-xs uppercase tracking-[0.2em] text-amber-500 font-bold">
                         Arca Nostra
                     </p>
                     <p className="font-serif italic text-xs text-base-content/40">
